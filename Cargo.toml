@@ -1,0 +1,9 @@
+[package]
+name = "tar_comparison"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chrono = "0.4.38"
+flate2 = "1.0.30"
+tar = "0.4.41"

@@ -108,9 +108,33 @@ fn main() {
     println!("- Done");
 
     let system_tar_gz = tempdir.join("system_tar_gzip_one_operation.tar.gz");
-    println!("- System tar+gzip");
+    println!("- System tar+gzip {}", system_tar_gz.display());
     system_tar_and_gzip(&source_dir, &system_tar_gz);
     println!("- Done");
+
+    let system_tar_gz_metdata = File::open(&system_tar_gz)
+        .expect("open system tar file")
+        .metadata()
+        .expect("get metadata");
+    let rust_tar_gz_metdata = File::open(&rust_tar_gz)
+        .expect("open system tar file")
+        .metadata()
+        .expect("get metadata");
+
+    println!(" - system_tar_gz size: {}", system_tar_gz_metdata.len());
+    println!(" - rust_tar_gz size: {}", rust_tar_gz_metdata.len());
+
+    match system_tar_gz_metdata.len().cmp(&rust_tar_gz_metdata.len()) {
+        Ordering::Less => {
+            println!("## system_tar_gz is smaller than rust_tar_gz (tar+gzip)\n :(")
+        }
+        Ordering::Equal => {
+            println!("## system_tar_gz and rust_tar_gz are the SAME size (tar+gzip)")
+        }
+        Ordering::Greater => {
+            println!("## rust_tar_gz is smaller than system_tar_gz (tar+gzip)\n :)")
+        }
+    }
 }
 
 fn rust_tar_and_gzip(dir_to_tar: &Path, destination_tar_gz: &Path) {
